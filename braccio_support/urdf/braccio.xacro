@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+
+<robot name="braccio_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find braccio_support)/urdf/braccio_macro.xacro"/>
+  <xacro:braccio_arm prefix="braccio"/>
+</robot>

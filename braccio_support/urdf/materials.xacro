@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find braccio_support)/urdf/colours.xacro"/>
+
+  <xacro:macro name="material_body">
+    <material name="">
+      <color rgba="${colour_orange}"/>
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="material_gripper">
+    <material name="">
+      <color rgba="${colour_white}"/>
+    </material>
+  </xacro:macro>
+
+</robot>

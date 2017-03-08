@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Grey white -->
+  <xacro:property name="colour_white"    value="0.86 0.85 0.81 1.0" />
+  <!-- Graphite grey -->
+  <xacro:property name="colour_grey"     value="0.34 0.35 0.36 1.0" />
+
+  <!-- Roboguide colours -->
+  <xacro:property name="colour_orange"   value="${ 207/255} ${ 79/255} ${ 0/255} 1.0" />
+
+</robot>
