@@ -5,7 +5,7 @@
 
   <xacro:macro name="braccio_arm" params="prefix">
     <!-- links -->
-    <link name="${prefix}_base_link">
+    <link name="${prefix}_base">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -23,14 +23,14 @@
     
     <link name="${prefix}_link_1">
       <visual>
-        <origin xyz="0 0 ${-7.22+0.01}" rpy="0 0 ${m_pi_2}"/>
+        <origin xyz="0 0 ${-7.22+0.01}" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/visual/base_m1.stl"/>
         </geometry>
         <xacro:material_body />
       </visual>
       <collision>
-        <origin xyz="0 0 ${-7.22+0.01}" rpy="0 0 ${m_pi_2}"/>
+        <origin xyz="0 0 ${-7.22+0.01}" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/collision/base_m1.stl"/>
         </geometry>
@@ -39,14 +39,14 @@
     
     <link name="${prefix}_link_2">
       <visual>
-        <origin xyz="0 0 2.45" rpy="0 0 ${m_pi}"/><!-- 2.45 -->
+        <origin xyz="0 0 2.45" rpy="0 0 ${-m_pi_2}"/> 
         <geometry>
           <mesh filename="package://braccio_support/meshes/visual/arm_m23.stl"/>
         </geometry>
         <xacro:material_body />
       </visual>
       <collision>
-        <origin xyz="0 0 2.45" rpy="0 0 ${m_pi}"/>
+        <origin xyz="0 0 2.45" rpy="0 0 ${-m_pi_2}"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/collision/arm_m23.stl"/>
         </geometry>
@@ -55,14 +55,14 @@
     
     <link name="${prefix}_link_3">
       <visual>
-        <origin xyz="0 0 2.45" rpy="0 0 ${m_pi}"/>
+        <origin xyz="0 0 2.45" rpy="0 0 ${-m_pi_2}"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/visual/arm_m23.stl"/>
         </geometry>
         <xacro:material_body />
       </visual>
       <collision>
-        <origin xyz="0 0 2.45" rpy="0 0 ${m_pi}"/>
+        <origin xyz="0 0 2.45" rpy="0 0 ${-m_pi_2}"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/collision/arm_m23.stl"/>
         </geometry>
@@ -71,33 +71,57 @@
     
     <link name="${prefix}_link_4">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="2 -0.475 0" rpy="0 ${m_pi_2} 0"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/visual/hand.stl"/>
         </geometry>
         <xacro:material_body />
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="2 -0.475 0" rpy="0 ${m_pi_2} 0"/>
         <geometry>
           <mesh filename="package://braccio_support/meshes/collision/hand.stl"/>
         </geometry>
       </collision>
     </link>
     
-<!--    <link name="${prefix}_tool0"/>-->
+    <link name="${prefix}_link_5">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://braccio_support/meshes/visual/gripper.stl"/>
+        </geometry>
+        <xacro:material_gripper />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://braccio_support/meshes/collision/gripper.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <link name="${prefix}_ee"/>
 
     <!-- joints -->
+    <!-- ROS base_link to Braccio World Coordinates transform -->
+    <link name="base_link" />
+    <joint name="${prefix}_base_link-base" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="base_link"/>
+      <child link="${prefix}_base"/>
+    </joint>
+    
     <joint name="${prefix}_joint_1" type="revolute">
       <origin xyz="0 0 7.22" rpy="0 0 0"/>
-      <parent link="${prefix}_base_link"/>
+      <parent link="${prefix}_base"/>
       <child link="${prefix}_link_1"/>
       <axis xyz="0 0 1"/>
       <limit lower="-3.14" upper="3.14" effort="0" velocity="3.67"/>
     </joint>
     
     <joint name="${prefix}_joint_2" type="revolute">
-      <origin xyz="0 0 0" rpy="${-m_pi_2} 0 0"/> <!-- rpy="${-m_pi_2} ${m_pi_2} 0"-->
+      <origin xyz="0 0 0" rpy="0 ${-m_pi_2} 0"/> 
       <parent link="${prefix}_link_1"/>
       <child link="${prefix}_link_2"/>
       <axis xyz="0 0 1"/>
@@ -105,7 +129,7 @@
     </joint>
     
     <joint name="${prefix}_joint_3" type="revolute">
-      <origin xyz="0 -12.5 0" rpy="0 0 0"/>
+      <origin xyz="12.5 0 0" rpy="0 0 0"/>
       <parent link="${prefix}_link_2"/>
       <child link="${prefix}_link_3"/>
       <axis xyz="0 0 1"/>
@@ -120,47 +144,19 @@
       <limit lower="-3.14" upper="3.14" effort="0" velocity="3.67"/>
     </joint>
     
-<!--    <joint name="${prefix}joint_3" type="revolute">-->
-<!--      <origin xyz="0 0 0.600" rpy="0 0 0"/>-->
-<!--      <parent link="${prefix}link_2"/>-->
-<!--      <child link="${prefix}link_3"/>-->
-<!--      <axis xyz="0 -1 0"/>-->
-<!--      <limit lower="-3.14" upper="4.61" effort="0" velocity="3.67"/>-->
-<!--    </joint>-->
-<!--    <joint name="${prefix}joint_4" type="revolute">-->
-<!--      <origin xyz="0 0 0.200" rpy="0 0 0"/>-->
-<!--      <parent link="${prefix}link_3"/>-->
-<!--      <child link="${prefix}link_4"/>-->
-<!--      <axis xyz="-1 0 0"/>-->
-<!--      <limit lower="-3.31" upper="3.31" effort="0" velocity="6.98"/>-->
-<!--    </joint>-->
-<!--    <joint name="${prefix}joint_5" type="revolute">-->
-<!--      <origin xyz="0.640 0 0" rpy="0 0 0"/>-->
-<!--      <parent link="${prefix}link_4"/>-->
-<!--      <child link="${prefix}link_5"/>-->
-<!--      <axis xyz="0 -1 0"/>-->
-<!--      <limit lower="-3.31" upper="3.31" effort="0" velocity="6.98"/>-->
-<!--    </joint>-->
-<!--    <joint name="${prefix}joint_6" type="revolute">-->
-<!--      <origin xyz="0.100 0 0" rpy="0 0 0"/>-->
-<!--      <parent link="${prefix}link_5"/>-->
-<!--      <child link="${prefix}link_6"/>-->
-<!--      <axis xyz="-1 0 0"/>-->
-<!--      <limit lower="-6.28" upper="6.28" effort="0" velocity="10.47"/>-->
-<!--    </joint>-->
-<!--    <joint name="${prefix}joint_6-tool0" type="fixed">-->
-<!--      <origin xyz="0 0 0" rpy="${m_pi} ${-m_pi_2} 0" />-->
-<!--      <parent link="${prefix}link_6"/>-->
-<!--      <child link="${prefix}tool0"/>-->
-<!--    </joint>-->
-
-    <!-- ROS base_link to Fanuc World Coordinates transform -->
-<!--    <link name="base_link" />-->
-    <link name="${prefix}_base" />
-    <joint name="${prefix}_base_link-base" type="fixed">
-      <origin xyz="0 0 0.0" rpy="0 0 ${m_pi_2}"/>
-      <parent link="${prefix}_base_link"/>
-      <child link="${prefix}_base"/>
+    <joint name="${prefix}_joint_5" type="revolute">
+      <origin xyz="6.1 0 0" rpy="0 ${m_pi_2} 0" />
+      <parent link="${prefix}_link_4"/>
+      <child link="${prefix}_link_5"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-3.14" upper="3.14" effort="0" velocity="3.67"/>
     </joint>
+    
+    <joint name="${prefix}_joint_ee" type="fixed">
+      <origin xyz="0 0.45 ${3.4+9.2}" rpy="0 0 0" />
+      <parent link="${prefix}_link_5"/>
+      <child link="${prefix}_ee"/>
+    </joint>
+    
   </xacro:macro>
 </robot>
