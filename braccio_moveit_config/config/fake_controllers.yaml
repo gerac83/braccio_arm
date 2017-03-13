@@ -1,0 +1,11 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - braccio_joint_1
+      - braccio_joint_2
+      - braccio_joint_3
+      - braccio_joint_4
+      - braccio_joint_5
+  - name: fake_braccio_gripper_controller
+    joints:
+      []

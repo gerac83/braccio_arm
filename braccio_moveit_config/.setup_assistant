@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: braccio_support
+    relative_path: urdf/braccio.urdf
+  SRDF:
+    relative_path: config/braccio_arm.srdf
+  CONFIG:
+    author_name: Gerardo Aragon-Camarasa
+    author_email: ger.ac83@gmail.com
+    generated_timestamp: 1489242773

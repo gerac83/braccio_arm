@@ -1,1 +1,1 @@
-rosrun xacro xacro braccio.xacro > braccio.urdf 
+rosrun xacro xacro braccio.xacro > braccio.urdf --inorder

@@ -5,7 +5,7 @@
 <!-- =================================================================================== -->
 <robot name="braccio_arm" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- links -->
-  <link name="braccio_base_link">
+  <link name="braccio_base">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -24,76 +24,137 @@
   </link>
   <link name="braccio_link_1">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0 0 -7.21"/>
       <geometry>
-        <mesh filename="package://braccio_support/meshes/visual/base_plate.stl"/>
+        <mesh filename="package://braccio_support/meshes/visual/base_m1.stl"/>
       </geometry>
       <material name="">
         <color rgba="0.811764705882 0.309803921569 0.0 1.0"/>
       </material>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 -7.21"/>
       <geometry>
-        <mesh filename="package://braccio_support/meshes/collision/base_plate.stl"/>
+        <mesh filename="package://braccio_support/meshes/collision/base_m1.stl"/>
       </geometry>
     </collision>
   </link>
-  <link name="braccio_tool0"/>
+  <link name="braccio_link_2">
+    <visual>
+      <origin rpy="0 0 -1.570796327" xyz="0 0 2.45"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/visual/arm_m23.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.811764705882 0.309803921569 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 -1.570796327" xyz="0 0 2.45"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/collision/arm_m23.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="braccio_link_3">
+    <visual>
+      <origin rpy="0 0 -1.570796327" xyz="0 0 2.45"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/visual/arm_m23.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.811764705882 0.309803921569 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 -1.570796327" xyz="0 0 2.45"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/collision/arm_m23.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="braccio_link_4">
+    <visual>
+      <origin rpy="0 1.570796327 0" xyz="2 -0.475 0"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/visual/hand.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.811764705882 0.309803921569 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 1.570796327 0" xyz="2 -0.475 0"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/collision/hand.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="braccio_link_5">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/visual/gripper.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.86 0.85 0.81 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://braccio_support/meshes/collision/gripper.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="braccio_ee"/>
   <!-- joints -->
+  <!-- ROS base_link to Braccio World Coordinates transform -->
+  <link name="base_link"/>
+  <joint name="braccio_base_link-base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="braccio_base"/>
+  </joint>
   <joint name="braccio_joint_1" type="revolute">
-    <origin rpy="0 0 0" xyz="0 0 0.004"/>
-    <parent link="braccio_base_link"/>
+    <origin rpy="0 0 0" xyz="0 0 7.22"/>
+    <parent link="braccio_base"/>
     <child link="braccio_link_1"/>
     <axis xyz="0 0 1"/>
     <limit effort="0" lower="-3.14" upper="3.14" velocity="3.67"/>
   </joint>
-  <!--    <joint name="${prefix}joint_2" type="revolute">-->
-  <!--      <origin xyz="0.150 0 0" rpy="0 0 0"/>-->
-  <!--      <parent link="${prefix}link_1"/>-->
-  <!--      <child link="${prefix}link_2"/>-->
-  <!--      <axis xyz="0 1 0"/>-->
-  <!--      <limit lower="-1.57" upper="2.79" effort="0" velocity="3.32"/>-->
-  <!--    </joint>-->
-  <!--    <joint name="${prefix}joint_3" type="revolute">-->
-  <!--      <origin xyz="0 0 0.600" rpy="0 0 0"/>-->
-  <!--      <parent link="${prefix}link_2"/>-->
-  <!--      <child link="${prefix}link_3"/>-->
-  <!--      <axis xyz="0 -1 0"/>-->
-  <!--      <limit lower="-3.14" upper="4.61" effort="0" velocity="3.67"/>-->
-  <!--    </joint>-->
-  <!--    <joint name="${prefix}joint_4" type="revolute">-->
-  <!--      <origin xyz="0 0 0.200" rpy="0 0 0"/>-->
-  <!--      <parent link="${prefix}link_3"/>-->
-  <!--      <child link="${prefix}link_4"/>-->
-  <!--      <axis xyz="-1 0 0"/>-->
-  <!--      <limit lower="-3.31" upper="3.31" effort="0" velocity="6.98"/>-->
-  <!--    </joint>-->
-  <!--    <joint name="${prefix}joint_5" type="revolute">-->
-  <!--      <origin xyz="0.640 0 0" rpy="0 0 0"/>-->
-  <!--      <parent link="${prefix}link_4"/>-->
-  <!--      <child link="${prefix}link_5"/>-->
-  <!--      <axis xyz="0 -1 0"/>-->
-  <!--      <limit lower="-3.31" upper="3.31" effort="0" velocity="6.98"/>-->
-  <!--    </joint>-->
-  <!--    <joint name="${prefix}joint_6" type="revolute">-->
-  <!--      <origin xyz="0.100 0 0" rpy="0 0 0"/>-->
-  <!--      <parent link="${prefix}link_5"/>-->
-  <!--      <child link="${prefix}link_6"/>-->
-  <!--      <axis xyz="-1 0 0"/>-->
-  <!--      <limit lower="-6.28" upper="6.28" effort="0" velocity="10.47"/>-->
-  <!--    </joint>-->
-  <!--    <joint name="${prefix}joint_6-tool0" type="fixed">-->
-  <!--      <origin xyz="0 0 0" rpy="${m_pi} ${-m_pi_2} 0" />-->
-  <!--      <parent link="${prefix}link_6"/>-->
-  <!--      <child link="${prefix}tool0"/>-->
-  <!--    </joint>-->
-  <!-- ROS base_link to Fanuc World Coordinates transform -->
-  <link name="braccio_base"/>
-  <joint name="braccio_base_link-base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.0"/>
-    <parent link="base_link"/>
-    <child link="braccio_base"/>
+  <joint name="braccio_joint_2" type="revolute">
+    <origin rpy="0 -1.570796327 0" xyz="0 0 0"/>
+    <parent link="braccio_link_1"/>
+    <child link="braccio_link_2"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-3.14" upper="3.14" velocity="3.67"/>
+  </joint>
+  <joint name="braccio_joint_3" type="revolute">
+    <origin rpy="0 0 0" xyz="12.5 0 0"/>
+    <parent link="braccio_link_2"/>
+    <child link="braccio_link_3"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-3.14" upper="3.14" velocity="3.67"/>
+  </joint>
+  <joint name="braccio_joint_4" type="revolute">
+    <origin rpy="0 0 0" xyz="12.5 0 0"/>
+    <parent link="braccio_link_3"/>
+    <child link="braccio_link_4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-3.14" upper="3.14" velocity="3.67"/>
+  </joint>
+  <joint name="braccio_joint_5" type="revolute">
+    <origin rpy="0 1.570796327 0" xyz="6.1 0 0"/>
+    <parent link="braccio_link_4"/>
+    <child link="braccio_link_5"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-3.14" upper="3.14" velocity="3.67"/>
+  </joint>
+  <joint name="braccio_joint_ee" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0.45 12.6"/>
+    <parent link="braccio_link_5"/>
+    <child link="braccio_ee"/>
   </joint>
 </robot>
 
