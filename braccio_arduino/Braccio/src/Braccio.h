@@ -28,7 +28,7 @@
 #define SOFT_START_DISABLED		-999
 
 // 50% full speed of the servos (0=full speed, 1-255 slower to faster)
-#define HALF_SPEEP_MOTOR 127
+#define HALF_SPEEP_MOTOR 10
 
 //The default value for the soft start
 #define SOFT_START_DEFAULT		0
@@ -55,12 +55,12 @@ public:
   *@param wait: wait is a boolean that, if true, causes the function call to block until move is complete
   * You should set begin(SOFT_START_DISABLED) if you are using the Arm Robot shield V1.6
   */
-  unsigned int begin(int soft_start_level=SOFT_START_DEFAULT, int speed=HALF_SPEEP_MOTOR, int wait=false);
+  unsigned int begin(int soft_start_level=SOFT_START_DEFAULT, int speed=HALF_SPEEP_MOTOR, bool wait=false);
 
   /**
    * This function allow the user to control all the servo motors in the Braccio
    */
-  int ServoMovement(int delay, int Vbase,int Vshoulder, int Velbow, int Vwrist_ver, int Vwrist_rot, int Vgripper);
+  int ServoMovement(int delay, int Vbase,int Vshoulder, int Velbow, int Vwrist_ver, int Vwrist_rot, int Vgripper, int speed[6]);
 
 
 private:

@@ -18,20 +18,21 @@
  */
 
 #include "Braccio.h"
+#include <VarSpeedServo.h>
 
-extern VarSpeedServo base;
-extern VarSpeedServo shoulder;
-extern VarSpeedServo elbow;
-extern VarSpeedServo wrist_rot;
-extern VarSpeedServo wrist_ver;
-extern VarSpeedServo gripper;
+VarSpeedServo base;
+VarSpeedServo shoulder;
+VarSpeedServo elbow;
+VarSpeedServo wrist_rot;
+VarSpeedServo wrist_ver;
+VarSpeedServo gripper;
 
-extern int step_base = 0;
-extern int step_shoulder = 45;
-extern int step_elbow = 180;
-extern int step_wrist_rot = 180;
-extern int step_wrist_ver = 90;
-extern int step_gripper = 10;
+int step_base = 0;
+int step_shoulder = 90;
+int step_elbow = 90;
+int step_wrist_rot = 90;
+int step_wrist_ver = 90;
+int step_gripper = 10;
 
 
 _Braccio Braccio;
@@ -54,6 +55,7 @@ unsigned int _Braccio::begin(int soft_start_level, int speed, bool wait) {
 		pinMode(SOFT_START_CONTROL_PIN,OUTPUT);
 		digitalWrite(SOFT_START_CONTROL_PIN,LOW);
 	}
+	
 
 	// initialization pin Servo motors
 	base.attach(11);
@@ -64,18 +66,26 @@ unsigned int _Braccio::begin(int soft_start_level, int speed, bool wait) {
 	gripper.attach(3);
 
 	//For each step motor this set up the initial degree
-	base.write(0, speed, wait);
-	shoulder.write(40, speed, wait);
-	elbow.write(180, speed, wait);
-	wrist_ver.write(170, speed, wait);
-	wrist_rot.write(0, speed, wait);
-	gripper.write(73, speed, wait);
+	//base.write(0, speed, wait);
+	//shoulder.write(40, speed, wait);
+	//elbow.write(180, speed, wait);
+	//wrist_ver.write(170, speed, wait);
+	//wrist_rot.write(0, speed, wait);
+	//gripper.write(73, speed, wait);
+
+    base.write(0, 10);
+	shoulder.write(90, 10);
+	elbow.write(90, 10);
+	wrist_ver.write(90, 10);
+	wrist_rot.write(90, 10);
+	gripper.write(73, 10);
+
 	//Previous step motor position
 	step_base = 0;
-	step_shoulder = 40;
-	step_elbow = 180;
-	step_wrist_ver = 170;
-	step_wrist_rot = 0;
+	step_shoulder = 90;
+	step_elbow = 90;
+	step_wrist_ver = 90;
+	step_wrist_rot = 90;
 	step_gripper = 73;
 
 	if(soft_start_level!=SOFT_START_DISABLED)
@@ -125,7 +135,7 @@ void _Braccio::_softStart(int soft_start_level){
  */
 int _Braccio::ServoMovement(int stepDelay, int vBase, int vShoulder, int vElbow,int vWrist_ver, int vWrist_rot, int vgripper, int speed[6]) {
 
-  bool wait = false;
+  bool wait = true;
 	// Check values, to avoid dangerous positions for the Braccio
   if (stepDelay > 30) stepDelay = 30;
 	if (stepDelay < 10) stepDelay = 10;
@@ -143,8 +153,8 @@ int _Braccio::ServoMovement(int stepDelay, int vBase, int vShoulder, int vElbow,
 	if (vgripper > 73) vgripper = 73;
 
   // Check speed is within range, otherwise default to HALF_SPEEP_MOTOR
-  for(i=0;i<6;i++){
-    if(speed[i] < 0 || speed[i] > 255) speed = HALF_SPEEP_MOTOR;
+  for(int i=0;i<6;i++){
+    if(speed[i] < 0 || speed[i] > 255) speed[i] = HALF_SPEEP_MOTOR;
   }
 
 	int exit = 1;
@@ -238,41 +248,42 @@ int _Braccio::ServoMovement(int stepDelay, int vBase, int vShoulder, int vElbow,
 		delay(stepDelay);
 
     // get current positions for each servo
-    c_base = base.read();
-    c_shoulder = shoulder.read();
-    c_elbow = elbow.read();
-    c_wristv = wrist_ver.read()
-    c_wristr = wrist_rot.read()
-    c_gripper = gripper.read();
+//    c_base = base.read();
+//    c_shoulder = shoulder.read();
+//    c_elbow = elbow.read();
+//    c_wristv = wrist_ver.read();
+//    c_wristr = wrist_rot.read();
+//    c_gripper = gripper.read();
 
-		//It checks if all the servo motors are in the desired position
-		// if ((vBase == step_base) && (vShoulder == step_shoulder)
-		// 		&& (vElbow == step_elbow) && (vWrist_ver == step_wrist_rot)
-		// 		&& (vWrist_rot == step_wrist_ver) && (vgripper == step_gripper)) {
-		// 	step_base = vBase;
-		// 	step_shoulder = vShoulder;
-		// 	step_elbow = vElbow;
-		// 	step_wrist_rot = vWrist_ver;
-		// 	step_wrist_ver = vWrist_rot;
-		// 	step_gripper = vgripper;
-		// 	exit = 0;
-		// } else {
-		// 	exit = 1;
-		// }
+	//It checks if all the servo motors are in the desired position
+    if ((vBase == step_base) && (vShoulder == step_shoulder)
+ 		&& (vElbow == step_elbow) && (vWrist_ver == step_wrist_rot)
+ 		&& (vWrist_rot == step_wrist_ver) && (vgripper == step_gripper)) {
+ 		    
+ 	    step_base = vBase;
+	 	step_shoulder = vShoulder;
+	 	step_elbow = vElbow;
+	 	step_wrist_rot = vWrist_ver;
+	 	step_wrist_ver = vWrist_rot;
+	 	step_gripper = vgripper;
+	 	exit = 0;
+    } else {
+	    exit = 1;
+	}
 
-    if ((vBase == c_base) && (vShoulder == c_shoulder)
-				&& (vElbow == c_elbow) && (vWrist_ver == c_wristv)
-				&& (vWrist_rot == c_wristr) && (vgripper == c_gripper)) {
-			step_base = vBase;
-			step_shoulder = vShoulder;
-			step_elbow = vElbow;
-			step_wrist_rot = vWrist_ver;
-			step_wrist_ver = vWrist_rot;
-			step_gripper = vgripper;
-			exit = 0;
-		} else {
-			exit = 1;
-		}
+//    if ((vBase == c_base) && (vShoulder == c_shoulder)
+//				&& (vElbow == c_elbow) && (vWrist_ver == c_wristv)
+//				&& (vWrist_rot == c_wristr) && (vgripper == c_gripper)) {
+//			step_base = vBase;
+//			step_shoulder = vShoulder;
+//			step_elbow = vElbow;
+//			step_wrist_rot = vWrist_ver;
+//			step_wrist_ver = vWrist_rot;
+//			step_gripper = vgripper;
+//			exit = 0;
+//		} else {
+//			exit = 1;
+//		}
 
 	}
 }
