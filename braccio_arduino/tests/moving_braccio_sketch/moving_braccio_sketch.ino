@@ -70,14 +70,13 @@ void loop() {
   Serial.print("\n...\n");
   //int movementDetails = atoi(incomingMovementDetails);
 
-  if(sizeof(stringMovementDetails) > 1){
+  if(sizeof(servo_movements)/sizeof(int) == 6){       // DOUBLE CHECK THIS CONDITION
     //Serial.print("Movement: %s \n\n", stringMovementDetails);    // this returns an error for some reason (?)
     //char test[20] = "Hello";
     //Serial.println("Movement: %s \n\n", test);
     digitalWrite(ledPin, HIGH);
     Serial.print("I'm inside");
     Serial.print(incomingMovementDetails[1]);
-
     
   }
   else{
@@ -90,7 +89,7 @@ void loop() {
   //Serial.print("Watch out, I'm about to move! \n");
                         //(step delay,   M1, M2,  M3,  M4, M5, M6);
   //int movementDetails[] = {20,           0,  15, 180, 170, 0,  73};
-  braccioMovement(servos_movements);
+  //braccioMovement(servos_movements);
 }
 
 void braccioMovement(int movementDetails[]) { 

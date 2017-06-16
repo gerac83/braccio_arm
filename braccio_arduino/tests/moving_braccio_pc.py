@@ -20,7 +20,7 @@ def main(values):
     
 if __name__ == "__main__":
     # If the value for the movement is given, use it. Otherwise keep Braccio steady.
-    if len(sys.argv) > 1:
+    if len(sys.argv) == 7:
     
         sys.argv.pop(0)
         
@@ -36,4 +36,5 @@ if __name__ == "__main__":
             print "Expecting an int..."
         
     else:
+        print "Expecting 6 values for the servos, " + str(len(sys.argv)-1) + " received. Command ignored."
         main(0)
