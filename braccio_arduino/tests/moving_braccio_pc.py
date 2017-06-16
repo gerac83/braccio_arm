@@ -2,14 +2,14 @@ import sys
 import requests
 import json
 
-def main(val):
+def main(values):
     url = "http://192.168.1.129:4000/jsonrpc"
     headers = {'content-type': 'application/json'}
-    
+
     # Example echo method
     payload = {
-        "method": "led_status",
-        "params": {"val": val},
+        "method": "moving_braccio",
+        "params": {"val": values},
         "jsonrpc": "2.0",
         "id": 0,
     }
@@ -19,12 +19,19 @@ def main(val):
     print response
     
 if __name__ == "__main__":
-    # If the value for the led is given, use it. Otherwise keep the led off.
-    if len(sys.argv) == 2:
+    # If the value for the movement is given, use it. Otherwise keep Braccio steady.
+    if len(sys.argv) > 1:
+    
+        sys.argv.pop(0)
+        
         # Convert string to int
+        intValues = []
         try:
-            intValue = int(sys.argv[1])
-            main(intValue)
+            for arg in sys.argv:
+                intValues.append(int(arg))
+            
+            main(intValues)
+        
         except ValueError:
             print "Expecting an int..."
         

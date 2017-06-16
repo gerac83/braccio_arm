@@ -12,8 +12,8 @@ from bridgeclient import BridgeClient as bridgeclient
 value = bridgeclient()
 
 @dispatcher.add_method
-def led_status(**kwargs):
-    value.put('L13_status',str(kwargs["val"]))
+def moving_braccio(**kwargs):
+    value.put('Braccio_movement',str(kwargs["val"]))
     return "done!"
 
 @Request.application
