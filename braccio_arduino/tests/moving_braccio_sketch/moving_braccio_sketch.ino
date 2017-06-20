@@ -1,4 +1,5 @@
 #include <Bridge.h>
+#include <Console.h>
 #include <Servo.h>
 #include <Braccio.h>
 #include <stdio.h>
@@ -12,34 +13,36 @@ Servo wrist_ver;
 Servo gripper;
 
 // Here we will hold the values coming from Python via Bridge.
-char incomingMovementDetails[7];
-char stringMovementDetails [50];
-
-// Variables used to extract each Servo Motor's position
-char * pch;
-int servos_movements[6];
-int i = 0;
+char M1[2];
+char M2[2];
+char M3[2];
+char M4[2];
+char M5[2];
+char M6[2];
+int M1int;
+int M2int;
+int M3int;
+int M4int;
+int M5int;
+int M6int;
 
 // constants won't change. Used here to set a pin number :
 const int ledPin =  LED_BUILTIN;// the number of the LED pin
 
 // Variables will change :
 int ledState = LOW;             // ledState used to set the LED
-
-// Generally, you should use "unsigned long" for variables that hold time
-// The value will quickly become too large for an int to store
-unsigned long previousMillis = 0;        // will store last time LED was updated
-
-// constants won't change :
-const long interval = 1000;           // interval at which to blink (milliseconds)
-
  
 void setup() {
   // Zero out the memory we're using for the Bridge.
-  memset(incomingMovementDetails, 0, 1);
-   
+  memset(M1, 0, 1);
+  memset(M2, 0, 1);
+  memset(M3, 0, 1);
+  memset(M4, 0, 1);
+  memset(M5, 0, 1);
+  memset(M6, 0, 1);
+  
   // Initialize digital pins 12 and 13 as output.
-  pinMode(ledPin, OUTPUT); 
+  pinMode(ledPin, OUTPUT);
  
   // Start using the Bridge.
   Bridge.begin();
@@ -47,65 +50,95 @@ void setup() {
   //Initialization functions and set up the initial position for Braccio
   //All the servo motors will be positioned in the "safety" position
   Braccio.begin();
+
+  // To output on the Serial Monitor
+  Console.begin();
 }
  
 void loop() {
-//    size = sizeof(incomingMovementDetails);
-  //  Serial.print("%d", size);
+  
   // Read Braccio movement coming from Python
-  Bridge.get("Braccio_movement", incomingMovementDetails, 50);
-  strcpy(stringMovementDetails, incomingMovementDetails);
+  Bridge.get("M1", M1, 3);
+  M1int = atoi(M1);
+  Console.print ("\n");
+  Console.print(M1int);
   
-  // Remove spaces, commas and square brackets from the Python input
-  // and save the result in an array
-  pch = strtok(stringMovementDetails, " [,]");
-  while (pch != NULL){
-    //Serial.print("%s\n",pch);   // CHECK WHY THIS DOESN'T WORK -- printf works, but Serial.print doesn't
-    servos_movements[i] = atoi(pch);
-    i++;
-    pch = strtok(NULL, " [,]");
-  }
+  Bridge.get("M2", M2, 3);
+  M2int = atoi(M2);
+  Console.print ("\n");
+  Console.print(M2int);
   
-  Serial.print(stringMovementDetails);
-  Serial.print("\n...\n");
-  //int movementDetails = atoi(incomingMovementDetails);
-
-  if(sizeof(servo_movements)/sizeof(int) == 6){       // DOUBLE CHECK THIS CONDITION
-    //Serial.print("Movement: %s \n\n", stringMovementDetails);    // this returns an error for some reason (?)
-    //char test[20] = "Hello";
-    //Serial.println("Movement: %s \n\n", test);
-    digitalWrite(ledPin, HIGH);
-    Serial.print("I'm inside");
-    Serial.print(incomingMovementDetails[1]);
-    
+  Bridge.get("M3", M3, 3);
+  M3int = atoi(M3);
+  Console.print ("\n");
+  Console.print(M3int);
+  
+  Bridge.get("M4", M4, 3);
+  M4int = atoi(M4);
+  Console.print ("\n");
+  Console.print(M4int);
+  
+  Bridge.get("M5", M5, 3);
+  M5int = atoi(M5);
+  Console.print ("\n");
+  Console.print(M5int);
+  
+  Bridge.get("M6", M6, 3);
+  M6int = atoi(M6);
+  Console.print ("\n");
+  Console.print(M6int);
+  
+  Console.print("\nHELLO WORLD\n");
+  if(M6int != 0){
+    Console.print("\nM1: ");
+    Console.print(M1int);
+    Console.print("\nM2: ");
+    Console.print(M2int);
+    Console.print("\nM3: ");
+    Console.print(M3int);
+    Console.print("\nM4: ");
+    Console.print(M4int);
+    Console.print("\nM5: ");
+    Console.print(M5int);
+    Console.print("\nM6: ");
+    Console.print(M6int);
+    Braccio.ServoMovement(20, M1int, M2int, M3int, M4int, M5int, M6int);
   }
   else{
-    digitalWrite(ledPin, LOW);
+    Console.print("\n ...Waiting for a command...\n"); 
   }
-  
-  // Wait one second
-  delay(500);
-
-  //Serial.print("Watch out, I'm about to move! \n");
-                        //(step delay,   M1, M2,  M3,  M4, M5, M6);
-  //int movementDetails[] = {20,           0,  15, 180, 170, 0,  73};
-  //braccioMovement(servos_movements);
+  //braccioMovement(M1int, M2int, M3int, M4int, M5int, M6int);
+  Console.print("\nBYE WORLD\n");
+  //Wait
+  delay(5000);
 }
 
-void braccioMovement(int movementDetails[]) { 
+void braccioMovement(int m1, int m2, int m3, int m4, int m5, int m6) { 
 
   //(step delay, M1, M2, M3, M4, M5, M6);
-  Braccio.ServoMovement(10,servos_movements[0], servos_movements[1], servos_movements[2], servos_movements[3],
-                        servos_movements[4], servos_movements[5]);
+  if(M6int != 0){
+    Console.print("\nM1: ");
+    Console.print(m1);
+    Console.print("\nM2: ");
+    Console.print(m2);
+    Console.print("\nM3: ");
+    Console.print(m3);
+    Console.print("\nM4: ");
+    Console.print(m4);
+    Console.print("\nM5: ");
+    Console.print(m5);
+    Console.print("\nM6: ");
+    Console.print(m6);
+    Braccio.ServoMovement(20, m1, m2, m3, m4, m5, m6);
+    digitalWrite(ledPin, HIGH);
+    M6int = 0;
+  }
+  else{
+    Console.print("\n ...Waiting for a command...\n");
+    digitalWrite(ledPin, LOW);
+  }
 
-  //Wait 1/2 second
-  delay(500);
 
-  Braccio.ServoMovement(20,           180,  165, 0, 0, 180,  10); 
-
-  //Wait 1/2 second
-  delay(500);
-  Serial.print("Hello World \n");
   return;
   
 }
