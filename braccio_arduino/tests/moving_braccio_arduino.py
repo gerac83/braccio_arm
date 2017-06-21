@@ -13,8 +13,13 @@ value = bridgeclient()
 
 @dispatcher.add_method
 def moving_braccio(**kwargs):
-    value.put('Braccio_movement',str(kwargs["val"]))
-    return "done!"
+    value.put('M1',str(kwargs["M1"]))
+    value.put('M2',str(kwargs["M2"]))
+    value.put('M3',str(kwargs["M3"]))
+    value.put('M4',str(kwargs["M4"]))
+    value.put('M5',str(kwargs["M5"]))
+    value.put('M6',str(kwargs["M6"]))
+    return "Done!"
 
 @Request.application
 def application(request):
@@ -25,5 +30,5 @@ def application(request):
 
 
 if __name__ == '__main__':
-    run_simple('192.168.1.129', 4000, application)
+    run_simple('192.168.1.129', 4002, application)
 
