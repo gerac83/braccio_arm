@@ -12,7 +12,7 @@ Servo wrist_rot;
 Servo wrist_ver;
 Servo gripper;
 
-define CHAR_LENGTH 4
+#define CHAR_LENGTH 4
 
 // Here we will hold the values coming from Python via Bridge.
 char M1[CHAR_LENGTH]; // Max value would be "999\n", hence buffer size is 4
@@ -22,7 +22,7 @@ char M4[CHAR_LENGTH];
 char M5[CHAR_LENGTH];
 char M6[CHAR_LENGTH];
 
-char mem_done[2]; // This var can only take "0\n" or "1\n"
+//char mem_done[2]; // This var can only take "0\n" or "1\n"
 
 int M1int;
 int M2int;
@@ -45,7 +45,7 @@ void setup() {
   memset(M4, 0, CHAR_LENGTH);
   memset(M5, 0, CHAR_LENGTH);
   memset(M6, 0, CHAR_LENGTH);
-  memset(mem_done, 0, 2);
+  //memset(mem_done, 0, 2);
   
   // Initialize digital pins 12 and 13 as output.
   pinMode(ledPin, OUTPUT);
@@ -65,9 +65,10 @@ void loop() {
  
   // *********** ADD HERE AN IF STATEMENT TO CONTROL WHEN TO READ VALUES FROM MEMORY FOR EXAMPLE:
   // THIS WILL ENSURE THAT ALL VALUE HAVE BEEN WRITTEN IN MEMORY, SEE PYTHON SCRIPT
-  Bridge.get("mem_done", mem_done, 2);
-  if(mem_done == 1){
+  //Bridge.get("mem_done", mem_done, 2);
+  //if(mem_done == 1){
      // Read Braccio movement coming from Python
+     Console.print("\n");
      Bridge.get("M1", M1, CHAR_LENGTH);
      M1int = atoi(M1);
      Console.print ("\n");
@@ -98,62 +99,26 @@ void loop() {
      Console.print ("\n");
      Console.print(M6int);
 
-     Console.print("\nHELLO WORLD\n");
+     // Perform the movement if a command was received
      if(M6int != 0){
-       Console.print("\nM1: ");
-       Console.print(M1int);
-       Console.print("\nM2: ");
-       Console.print(M2int);
-       Console.print("\nM3: ");
-       Console.print(M3int);
-       Console.print("\nM4: ");
-       Console.print(M4int);
-       Console.print("\nM5: ");
-       Console.print(M5int);
-       Console.print("\nM6: ");
-       Console.print(M6int);
-       Braccio.ServoMovement(20, M1int, M2int, M3int, M4int, M5int, M6int);
+       // Check that the values for each joint are within the correct ranges
+       if (M1int > -1 && M1int < 181 && M2int > 14 && M2int < 166 && M3int > -1 && M3int < 181 &&
+           M4int > -1 && M4int < 181 && M5int > -1 && M5int < 181 && M6int > 9 && M6int < 74){
+        
+          digitalWrite(ledPin, HIGH);
+          Braccio.ServoMovement(20, M1int, M2int, M3int, M4int, M5int, M6int);
+       }
+       else{
+          Console.print("\nThe values you sent for the joints are not within the correct range");
+       }
      }
      else{
+       digitalWrite(ledPin, LOW);
        Console.print("\n ...Waiting for a command...\n"); 
      }
-     //braccioMovement(M1int, M2int, M3int, M4int, M5int, M6int);
-     Console.print("\nBYE WORLD\n");
-  }
-  else{
-   Console.print("\n ...Waiting for mem_done...\n");
-  }
+     
+  M6int = 0;
   //Wait
-  delay(5000);
-}
-
-void braccioMovement(int m1, int m2, int m3, int m4, int m5, int m6) { 
-
-  //(step delay, M1, M2, M3, M4, M5, M6);
-  if(M6int != 0){
-    Console.print("\nM1: ");
-    Console.print(m1);
-    Console.print("\nM2: ");
-    Console.print(m2);
-    Console.print("\nM3: ");
-    Console.print(m3);
-    Console.print("\nM4: ");
-    Console.print(m4);
-    Console.print("\nM5: ");
-    Console.print(m5);
-    Console.print("\nM6: ");
-    Console.print(m6);
-    Braccio.ServoMovement(20, m1, m2, m3, m4, m5, m6);
-    digitalWrite(ledPin, HIGH);
-    M6int = 0;
-  }
-  else{
-    Console.print("\n ...Waiting for a command...\n");
-    digitalWrite(ledPin, LOW);
-  }
-
-
-  return;
-  
+  delay(3000);
 }
 

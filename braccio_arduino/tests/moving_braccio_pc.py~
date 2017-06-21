@@ -3,7 +3,7 @@ import requests
 import json
 
 def main(values):
-    url = "http://192.168.1.129:4002/jsonrpc"
+    url = "http://192.168.1.137:4003/jsonrpc"
     headers = {'content-type': 'application/json'}
     if (len(values) > 1):
         # Example echo method
@@ -46,4 +46,4 @@ if __name__ == "__main__":
         
     else:
         print "Expecting 6 values for the servos, " + str(len(sys.argv)-1) + " received. Command ignored."
-        main(0)
+        main([0])

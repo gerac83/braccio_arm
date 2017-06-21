@@ -3,7 +3,7 @@ import requests
 import json
 
 def main(values):
-    url = "http://192.168.1.129:4002/jsonrpc"
+    url = "http://192.168.1.129:4003/jsonrpc"
     headers = {'content-type': 'application/json'}
     if (len(values) > 1):
         # Example echo method
