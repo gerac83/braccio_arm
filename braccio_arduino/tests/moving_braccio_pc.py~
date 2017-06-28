@@ -11,7 +11,7 @@ def main(values):
         intValues = []
         try:
             for value in values:
-                intValues.append(int(value))
+                intValues.append(int(float(value)))
             
         
         except ValueError:
@@ -21,6 +21,7 @@ def main(values):
         print "Expecting 6 values for the servos, " + str(len(values)-1) + " received. Command ignored."
         intValues = [0]
 
+    print intValues
     if (intValues[0] < 0 or intValues[0] > 180 or intValues[1] < 15 or intValues[1] > 165 or 
         intValues[2] < 0 or intValues[2] > 180 or intValues[3] < 0 or intValues[3] > 180 or 
         intValues[4] < 0 or intValues[4] > 180):
@@ -30,7 +31,7 @@ def main(values):
               "165 degrees \nM3=elbow degrees. Allowed values from 0 to 180 degrees \nM4=wrist "
               "vertical degrees. Allowed values from 0 to 180 degrees \nM5=wrist rotation "
               "degrees. Allowed values from 0 to 180 degrees\nM6=gripper degrees. Allowed "
-              "values from 10 to 73 degrees. 10: the toungue is open, 73: the gripper is "
+              "values from 10 to 73 degrees. 10: the tongue is open, 73: the gripper is "
               "closed.")
 
     url = "http://192.168.1.129:2883/jsonrpc"
@@ -56,9 +57,10 @@ def main(values):
     try:
         response = requests.post(
             url, data=json.dumps(payload), headers=headers).json()
+        print "hello :)"
         print response
     except requests.ConnectionError:
-        print "Yo, error."
+        print "Connection error. Is moving_braccio_arduino.py running?"
         
     
     

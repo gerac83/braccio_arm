@@ -30,7 +30,8 @@ def callback(data):
         command = ['__ignored__']
         for elem in to_be_appended:
             command = command + [abs(float(elem))*(57.2958)]      # Append degrees and not radians
-        
+            #command = command + [float(elem)*(57.2958)]
+
         if c:
             #command = ['__ignored__'] + ['180', '165', '0', '0', '180', '73']  # To Be Deleted
             c = False
@@ -39,17 +40,16 @@ def callback(data):
             c = True
         print "\n\n"
         print command
-        moving_braccio_pc.main(command)
-        time.sleep(1)
-           
-
-    print float(final_positions[0][1])+0.5
+        #moving_braccio_pc.main(command+['73'])      # Keep the gripper closed
+        #time.sleep(3)
+        
     
     #moving_braccio_pc.main(['__ignored__', '180', '165', '0', '0', '180', '73'])
-    #publish_positions(final_positions)
+
+''' 
+This can probably be deleted
 
 def publish_positions(final_positions):
-    print "publish_positions"
 
     pub = rospy.Publisher('positions', String, queue_size=10)
     rate = rospy.Rate(20)
@@ -58,6 +58,7 @@ def publish_positions(final_positions):
         pub.publish(''.join(map(str, final_positions)))
 
         rate.sleep()
+'''
 
 def listener():
 

@@ -4,15 +4,15 @@ import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import DisplayTrajectory
-import moving_braccio_pc
-import time
 
 def callback(data):
 
     print "\n\nNew Position: "
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", DisplayTrajectory.trajectory)
     
+    #print dir(data)
     text = str(data.trajectory[0])
+    #print text
 
     text = text.split("\n")
     positions = []
@@ -21,35 +21,15 @@ def callback(data):
             positions.append(line)
     
     final_positions = []
-    c = True                    # To Be Deleted
     for elem in positions:
         start = elem.index("[")
         end = elem.index("]")
-        final_positions.append(elem[start+1:end].split(","))    # Useless if using next line
-        to_be_appended = elem[start+1:end].split(",")
-        command = ['__ignored__']
-        for elem in to_be_appended:
-            command = command + [abs(float(elem))*(57.2958)]      # Append degrees and not radians
-            #command = command + [float(elem)*(57.2958)]
-
-        if c:
-            #command = ['__ignored__'] + ['180', '165', '0', '0', '180', '73']  # To Be Deleted
-            c = False
-        else:
-            #command = ['__ignored__'] + ['100', '165', '0', '0', '140', '10']  # To Be Deleted
-            c = True
-        print "\n\n"
-        print command
-        moving_braccio_pc.main(command+['73'])      # Keep the gripper closed
-        #time.sleep(3)
-        
+        final_positions.append(elem[start+1:end].split(","))
     
-    #moving_braccio_pc.main(['__ignored__', '180', '165', '0', '0', '180', '73'])
-
-''' 
-This can probably be deleted
+    publish_positions(final_positions)
 
 def publish_positions(final_positions):
+    print "publish_positions"
 
     pub = rospy.Publisher('positions', String, queue_size=10)
     rate = rospy.Rate(20)
@@ -58,7 +38,6 @@ def publish_positions(final_positions):
         pub.publish(''.join(map(str, final_positions)))
 
         rate.sleep()
-'''
 
 def listener():
 
@@ -68,4 +47,5 @@ def listener():
     rospy.spin()
 
 if __name__ == "__main__":
+    print "Working"
     listener()
