@@ -114,7 +114,7 @@ void loop() {
      }
      else{
        digitalWrite(ledPin, LOW);
-       Console.print("\n ...Waiting for a command...\n"); 
+       Console.print("\n ...Waiting for a command...\n");
      }
      
   M6int = 0;
