@@ -29,7 +29,7 @@
     </group_state>
     <group_state name="resting" group="arm">
         <joint name="braccio_joint_1" value="0" />
-        <joint name="braccio_joint_2" value="0.785" />
+        <joint name="braccio_joint_2" value="-0.785" />
         <joint name="braccio_joint_3" value="1.57" />
         <joint name="braccio_joint_4" value="1.57" />
         <joint name="braccio_joint_5" value="0" />

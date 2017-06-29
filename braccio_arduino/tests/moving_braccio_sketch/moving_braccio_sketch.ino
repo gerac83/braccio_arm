@@ -100,7 +100,8 @@ void loop() {
      Console.print(M6int);
 
      // Perform the movement if a command was received
-     if(M6int != 0){
+     if(M1int != -1 and M2int != -1 and M3int != -1 and
+        M4int != -1 and M5int != -1 and M6int != -1 ){
        // Check that the values for each joint are within the correct ranges
        if (M1int > -1 && M1int < 181 && M2int > 14 && M2int < 166 && M3int > -1 && M3int < 181 &&
            M4int > -1 && M4int < 181 && M5int > -1 && M5int < 181 && M6int > 9 && M6int < 74){
@@ -117,8 +118,13 @@ void loop() {
        Console.print("\n ...Waiting for a command...\n");
      }
      
-  M6int = 0;
+  M1int = -1;
+  M2int = -1;
+  M3int = -1;
+  M4int = -1;
+  M5int = -1;
+  M6int = -1;
   //Wait
-  delay(3000);
+  delay(20);
 }
 

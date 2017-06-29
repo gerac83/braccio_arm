@@ -21,7 +21,7 @@ def callback(data):
             positions.append(line)
     
     final_positions = []
-    c = True                    # To Be Deleted
+
     for elem in positions:
         start = elem.index("[")
         end = elem.index("]")
@@ -29,15 +29,14 @@ def callback(data):
         to_be_appended = elem[start+1:end].split(",")
         command = ['__ignored__']
         for elem in to_be_appended:
-            command = command + [abs(float(elem))*(57.2958)]      # Append degrees and not radians
+            #command = command + [abs(float(elem))*(57.2958)]      # Append degrees and not radians
             #command = command + [float(elem)*(57.2958)]
-
-        if c:
-            #command = ['__ignored__'] + ['180', '165', '0', '0', '180', '73']  # To Be Deleted
-            c = False
-        else:
-            #command = ['__ignored__'] + ['100', '165', '0', '0', '140', '10']  # To Be Deleted
-            c = True
+            if 'e' in elem:
+                command = command + [0]
+            else:
+                command = command + [float(elem)*(57.2958)+90]
+                #command = command + [float(elem)]
+        
         print "\n\n"
         print command
         moving_braccio_pc.main(command+['73'])      # Keep the gripper closed
@@ -45,20 +44,6 @@ def callback(data):
         
     
     #moving_braccio_pc.main(['__ignored__', '180', '165', '0', '0', '180', '73'])
-
-''' 
-This can probably be deleted
-
-def publish_positions(final_positions):
-
-    pub = rospy.Publisher('positions', String, queue_size=10)
-    rate = rospy.Rate(20)
-    while not rospy.is_shutdown():
-        rospy.loginfo(final_positions)
-        pub.publish(''.join(map(str, final_positions)))
-
-        rate.sleep()
-'''
 
 def listener():
 
