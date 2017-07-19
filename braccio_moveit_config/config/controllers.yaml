@@ -1,0 +1,17 @@
+controller_list:
+  - name: arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - braccio_joint_1
+      - braccio_joint_2
+      - braccio_joint_3
+      - braccio_joint_4
+      - braccio_joint_5
+  - name: braccio_gripper_controller
+    action_ns: gripper_action
+    type: GripperCommand
+    default: true
+    joints:
+      []

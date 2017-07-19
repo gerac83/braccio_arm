@@ -121,35 +121,35 @@
     <parent link="braccio_base"/>
     <child link="braccio_link_1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="0" lower="0" upper="3.14" velocity="3.67"/>
+    <limit effort="0" lower="-1.57" upper="1.57" velocity="3.67"/>
   </joint>
   <joint name="braccio_joint_2" type="revolute">
     <origin rpy="0 -1.570796327 0" xyz="0 0 0"/>
     <parent link="braccio_link_1"/>
     <child link="braccio_link_2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="0" lower="0.26" upper="2.88" velocity="3.67"/>
+    <limit effort="0" lower="-1.31" upper="1.31" velocity="3.67"/>
   </joint>
   <joint name="braccio_joint_3" type="revolute">
     <origin rpy="0 0 0" xyz="12.5 0 0"/>
     <parent link="braccio_link_2"/>
     <child link="braccio_link_3"/>
     <axis xyz="0 0 1"/>
-    <limit effort="0" lower="0" upper="3.14" velocity="3.67"/>
+    <limit effort="0" lower="-1.57" upper="1.57" velocity="3.67"/>
   </joint>
   <joint name="braccio_joint_4" type="revolute">
     <origin rpy="0 0 0" xyz="12.5 0 0"/>
     <parent link="braccio_link_3"/>
     <child link="braccio_link_4"/>
     <axis xyz="0 0 1"/>
-    <limit effort="0" lower="0" upper="3.14" velocity="3.67"/>
+    <limit effort="0" lower="-1.57" upper="1.57" velocity="3.67"/>
   </joint>
   <joint name="braccio_joint_5" type="revolute">
     <origin rpy="0 1.570796327 0" xyz="6.1 0 0"/>
     <parent link="braccio_link_4"/>
     <child link="braccio_link_5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="0" lower="0" upper="3.14" velocity="3.67"/>
+    <limit effort="0" lower="-1.57" upper="1.57" velocity="3.67"/>
   </joint>
   <joint name="braccio_joint_ee" type="fixed">
     <origin rpy="0 0 0" xyz="0 0.45 12.6"/>
