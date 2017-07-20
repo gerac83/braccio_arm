@@ -26,7 +26,7 @@
 
   <!-- publish the robot state (tf transforms) -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+<!--  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />-->
 
   <include file="$(find braccio_moveit_config)/launch/move_group.launch">
     <arg name="publish_monitored_planning_scene" value="true" />
@@ -37,10 +37,10 @@
   </include>
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="false"/>
-    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
-  </node>
+<!--  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">-->
+<!--    <param name="/use_gui" value="false"/>-->
+<!--    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>-->
+<!--  </node>-->
 <!--  <include file="$(find braccio_moveit_config)/launch/default_warehouse_db.launch" />-->
 
 </launch>

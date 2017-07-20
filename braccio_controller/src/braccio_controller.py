@@ -1,31 +1,35 @@
 #! /usr/bin/env python
 
 import rospy
-from __future__ import print_function
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction
+from control_msgs.msg import FollowJointTrajectoryResult
 from trajectory_msgs.msg import JointTrajectory
 from sensor_msgs.msg import JointState
+
+
+joint_names = ['braccio_joint_1', 'braccio_joint_2', 'braccio_joint_3', 'braccio_joint_4', 'braccio_joint_5']
 
 class RobotTrajectoryFollower(object):
     RATE = 0.02
 
     def __init__(self, name):
         self._action_name = name
-        self._as = actionlib.SimpleActionServer(self._action_name, FollowJointTrajectoryAction,self.on_goal, self.on_cancel, auto_start=False)
+        self._as = actionlib.ActionServer(self._action_name+"/follow_joint_trajectory", FollowJointTrajectoryAction, self.on_goal, self.on_cancel, auto_start=False)
         self.goal_handle = None
-        self.traj = JointTrajectory()
+        self.traj = None
+        self.lenpoints = None
+        self.index = 0
         
-        #get joint names from parameter server!
+        self.current_positions = [0.0] * len(joint_names)
         
-        # Hack to close the loop between controller and moveit, this is OK for a virtual controller
-        rospy.Subscriber("/joint_states", JointState, self._get_states)
+        self.pub_joint_states = rospy.Publisher('joint_states', JointState, queue_size=1)
         
         self.update_timer = rospy.Timer(rospy.Duration(self.RATE), self._update)
     
     def start(self):
         self._as.start()
-        print "The action server for braccio_controller has started!"
+        rospy.logwarn("The action server for braccio_controller has started")
         
     def on_goal(self, goal_handle):
     
@@ -43,9 +47,15 @@ class RobotTrajectoryFollower(object):
         
         # TODO: Checks that the trajectory has velocities
         
-        self.goal_handle.set_accepted()
+        rospy.loginfo("Accepting goal!")
+        # Replaces the goal
+        self.goal_handle = goal_handle
+        self.traj = goal_handle.get_goal().trajectory
+        self.lenpoints = len(self.traj.points)
+        self.index = 0
+        self.goal_handle.set_accepted("Trajectory accepted!")
         
-    def on_cancel(self, goal_handle)
+    def on_cancel(self, goal_handle):
     
         if goal_handle == self.goal_handle:
             self.goal_handle.set_canceled()
@@ -55,11 +65,43 @@ class RobotTrajectoryFollower(object):
             
     def _update(self, event):
         #update robot state
+        now = rospy.get_rostime()
         
-        if self.traj:
+        msg = JointState()
+        msg.header.stamp = now
+        msg.header.frame_id = "From arduino webserver for braccio"
+        msg.name = joint_names
         
+        if self.traj and self.goal_handle:
+            #rospy.logwarn("UPDATE ************************")
+            #rospy.logwarn(self.traj)
+            
+            if self.index == self.lenpoints:
+                msg_success = 'Trajectory execution successfully completed'
+                rospy.logwarn(msg_success)
+                res = FollowJointTrajectoryResult()
+                res.error_code=FollowJointTrajectoryResult.SUCCESSFUL
+                self.goal_handle.set_succeeded(result=res, text=msg_success)
+                self.goal_handle = None
+                self.index = 0
+                self.lenpoints = None
+                self.traj = None
+            else:
+                position = self.traj.points[self.index].positions
+                self.index += 1
+                self.current_positions = position
+            
+        msg.position = self.current_positions
+        #msg.effort = [0] * 5
+        self.pub_joint_states.publish(msg)
 
 
 
 if __name__ == '__main__':
     rospy.init_node('braccio_controller')
+    as_ = RobotTrajectoryFollower("braccio_controller")
+    as_.start()
+    rospy.spin()
+    
+    
+    
