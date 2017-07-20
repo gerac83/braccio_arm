@@ -9,7 +9,15 @@ from control_msgs.msg import FollowJointTrajectoryAction
 from std_msgs.msg import Float32
 from threading import Thread
 
+class Segment():
+    def __init__(self, num_joints):
+        self.start_time = 0.0  # trajectory segment start time
+        self.duration = 0.0  # trajectory segment duration
+        self.positions = [0.0] * num_joints
+        self.velocities = [0.0] * num_joints
+
 class JointTrajectoryActionController():
+        
     def __init__(self, controller_namespace, controllers):
         self.update_rate = 1000
         self.state_update_rate = 50
@@ -40,12 +48,54 @@ class JointTrajectoryActionController():
     _feedback = Float32()
     _result = Float32()
 
-    def __init__(self, name):
-        self._action_name = "/follow_joint_trajectory"
-        self.action_server = actionlib.SimpleActionServer(self._action_name, FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
-        print "lorenzo"
+    def initialize(self):
+        ns = self.controller_namespace + '/joint_trajectory_action_node/constraints'
+        self.goal_time_constraint = rospy.get_param(ns + '/goal_time', 0.0)
+        self.stopped_velocity_tolerance = rospy.get_param(ns + '/stopped_velocity_tolerance', 0.01)
+        self.goal_constraints = []
+        self.trajectory_constraints = []
+        self.min_velocity = rospy.get_param(self.controller_namespace + '/joint_trajectory_action_node/min_velocity', 0.1)
+        
+        for joint in self.joint_names:
+            self.goal_constraints.append(rospy.get_param(ns + '/' + joint + '/goal', -1.0))
+            self.trajectory_constraints.append(rospy.get_param(ns + '/' + joint + '/trajectory', -1.0))
+            
+        # Message containing current state for all controlled joints
+        self.msg = FollowJointTrajectoryFeedback()
+        self.msg.joint_names = self.joint_names
+        self.msg.desired.positions = [0.0] * self.num_joints
+        self.msg.desired.velocities = [0.0] * self.num_joints
+        self.msg.desired.accelerations = [0.0] * self.num_joints
+        self.msg.actual.positions = [0.0] * self.num_joints
+        self.msg.actual.velocities = [0.0] * self.num_joints
+        self.msg.error.positions = [0.0] * self.num_joints
+        self.msg.error.velocities = [0.0] * self.num_joints
+        
+        return True
+
+
+    def start(self):
+        self.running = True
+        
+        self.command_sub = rospy.Subscriber(self.controller_namespace + '/command', JointTrajectory, self.process_command)
+        self.state_pub = rospy.Publisher(self.controller_namespace + '/state', FollowJointTrajectoryFeedback, queue_size=1)
+        self.action_server = actionlib.SimpleActionServer(self.controller_namespace + '/follow_joint_trajectory',
+                                                          FollowJointTrajectoryAction,
+                                                          execute_cb=self.process_follow_trajectory,
+                                                          auto_start=False)
         self.action_server.start()
-        #Thread(target=self.update_state).start()
+        Thread(target=self.update_state).start()
+
+    def stop(self):
+        self.running = False
+
+    def process_command(self, msg):
+        if self.action_server.is_active(): self.action_server.set_preempted()
+        
+        while self.action_server.is_active():
+            rospy.sleep(0.01)
+            
+        self.process_trajectory(msg)
     
     
     
@@ -258,6 +308,22 @@ class JointTrajectoryActionController():
             self.action_server.set_succeeded(result=res, text=msg)
     
     
+    
+    def update_state(self):
+        rate = rospy.Rate(self.state_update_rate)
+        while self.running and not rospy.is_shutdown():
+            self.msg.header.stamp = rospy.Time.now()
+            
+            # Publish current joint state
+            for i, joint in enumerate(self.joint_names):
+                state = self.joint_states[joint]
+                self.msg.actual.positions[i] = state.current_pos
+                self.msg.actual.velocities[i] = abs(state.velocity)
+                self.msg.error.positions[i] = self.msg.actual.positions[i] - self.msg.desired.positions[i]
+                self.msg.error.velocities[i] = self.msg.actual.velocities[i] - self.msg.desired.velocities[i]
+                
+            self.state_pub.publish(self.msg)
+            rate.sleep()
     
             
     # COPIED FROM https://github.com/arebgun/dynamixel_motor/blob/master/dynamixel_controllers/src/dynamixel_controllers/joint_trajectory_action_controller.py

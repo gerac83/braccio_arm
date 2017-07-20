@@ -21,7 +21,7 @@ def callback(data):
         if "positions" in line:
             positions.append(line)
 
-
+    last_command = []           # Save the last command
     for elem in positions:
         start = elem.index("[")
         end = elem.index("]")
@@ -35,7 +35,10 @@ def callback(data):
         
         print "\n\n"
         print command
-        moving_braccio_pc.main(command+['73'])      # Keep the gripper closed
+        moving_braccio_pc.main(command+['10'])      # Keep the gripper open
+        last_command = command
+        
+    moving_braccio_pc.main(last_command+['73'])      # Close the gripper to grasp the object
         
 
 def listener():

@@ -19,6 +19,7 @@
   <arg name="max_safe_path_cost" default="1"/>
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
+  <arg name="load_robot_description"/>
 
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find braccio_moveit_config)/launch/planning_pipeline.launch.xml">
