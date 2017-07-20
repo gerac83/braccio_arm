@@ -10,38 +10,38 @@ from std_msgs.msg import Float32
 from threading import Thread
 
 class JointTrajectoryActionController():
-    def __init__(self, controller_namespace, controllers):
-        self.update_rate = 1000
-        self.state_update_rate = 50
-        self.trajectory = []
-        
-        self.controller_namespace = controller_namespace
-        self.joint_names = [c.joint_name for c in controllers]
-        
-        self.joint_to_controller = {}
-        for c in controllers:
-            self.joint_to_controller[c.joint_name] = c
-            
-        self.port_to_joints = {}
-        for c in controllers:
-            if c.port_namespace not in self.port_to_joints: self.port_to_joints[c.port_namespace] = []
-            self.port_to_joints[c.port_namespace].append(c.joint_name)
-            
-        self.port_to_io = {}
-        for c in controllers:
-            if c.port_namespace in self.port_to_io: continue
-            self.port_to_io[c.port_namespace] = c.dxl_io
-            
-        self.joint_states = dict(zip(self.joint_names, [c.joint_state for c in controllers]))
-        self.num_joints = len(self.joint_names)
-        self.joint_to_idx = dict(zip(self.joint_names, range(self.num_joints)))
+#    def __init__(self, controller_namespace, controllers):
+#        self.update_rate = 1000
+#        self.state_update_rate = 50
+#        self.trajectory = []
+#        
+#        self.controller_namespace = controller_namespace
+#        self.joint_names = [c.joint_name for c in controllers]
+#        
+#        self.joint_to_controller = {}
+#        for c in controllers:
+#            self.joint_to_controller[c.joint_name] = c
+#            
+#        self.port_to_joints = {}
+#        for c in controllers:
+#            if c.port_namespace not in self.port_to_joints: self.port_to_joints[c.port_namespace] = []
+#            self.port_to_joints[c.port_namespace].append(c.joint_name)
+#            
+#        self.port_to_io = {}
+#        for c in controllers:
+#            if c.port_namespace in self.port_to_io: continue
+#            self.port_to_io[c.port_namespace] = c.dxl_io
+#            
+#        self.joint_states = dict(zip(self.joint_names, [c.joint_state for c in controllers]))
+#        self.num_joints = len(self.joint_names)
+#        self.joint_to_idx = dict(zip(self.joint_names, range(self.num_joints)))
 
     # create messages that are used to publish feedback/result
     _feedback = Float32()
     _result = Float32()
 
     def __init__(self, name):
-        self._action_name = "/follow_joint_trajectory"
+        self._action_name = name+"/follow_joint_trajectory"
         self.action_server = actionlib.SimpleActionServer(self._action_name, FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
         print "lorenzo"
         self.action_server.start()
@@ -299,6 +299,6 @@ class JointTrajectoryActionController():
             self._as.set_succeeded(self._result)
         
 if __name__ == '__main__':
-    rospy.init_node('braccio')
-    server = JointTrajectoryActionController(rospy.get_name())
+    rospy.init_node('braccio_controller')
+    server = JointTrajectoryActionController("braccio_controller")
     rospy.spin()

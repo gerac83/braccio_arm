@@ -9,3 +9,9 @@ controller_list:
       - braccio_joint_3
       - braccio_joint_4
       - braccio_joint_5
+  - name: braccio_gripper_controller
+    action_ns: gripper_action
+    type: GripperCommand
+    default: true
+    joints:
+      []
