@@ -4,7 +4,7 @@
 
   <!-- Non-standard joint names:
        - Create a file <robot_moveit_dir>/config/joint_names.yaml
-           controller_joint_names: [joint_1, joint_2, ... joint_N] 
+           controller_joint_names: [joint_1, joint_2, ... joint_N]
        - Update with joint names for your robot (in order expected by rbt controller)
        - and uncomment the following line: -->
    <rosparam command="load" file="$(find braccio_moveit_config)/config/joint_names.yaml"/>
@@ -35,6 +35,11 @@
     <arg name="config" value="true"/>
   </include>
 
+  <!-- We do not have a robot connected, so publish fake joint states -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="/use_gui" value="false"/>
+    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
+  </node>
 <!--  <include file="$(find braccio_moveit_config)/launch/default_warehouse_db.launch" />-->
 
 </launch>
