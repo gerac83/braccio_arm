@@ -4,6 +4,7 @@
 #include <Braccio.h>
 #include <stdio.h>
 #include <string.h>
+#include <SD.h>
 
 Servo base;
 Servo shoulder;
@@ -22,30 +23,30 @@ char M4[CHAR_LENGTH];
 char M5[CHAR_LENGTH];
 char M6[CHAR_LENGTH];
 
-//char mem_done[2]; // This var can only take "0\n" or "1\n"
-
-int M1int;
-int M2int;
-int M3int;
-int M4int;
-int M5int;
-int M6int;
+int M1int,M2int,M3int,M4int,M5int,M6int = -1;
+short trajectory[60][6];
+int c=0;
+bool flag = false;
 
 // constants won't change. Used here to set a pin number :
 const int ledPin =  LED_BUILTIN;// the number of the LED pin
 
 // Variables will change :
 int ledState = LOW;             // ledState used to set the LED
- 
+
+
+
 void setup() {
+  //void execute_trajectory(int trajectory[], int *c);
   // Zero out the memory we're using for the Bridge.
-  memset(M1, 0, CHAR_LENGTH);
-  memset(M2, 0, CHAR_LENGTH);
-  memset(M3, 0, CHAR_LENGTH);
-  memset(M4, 0, CHAR_LENGTH);
-  memset(M5, 0, CHAR_LENGTH);
-  memset(M6, 0, CHAR_LENGTH);
+  memset(M1, -1, CHAR_LENGTH);
+  memset(M2, -1, CHAR_LENGTH);
+  memset(M3, -1, CHAR_LENGTH);
+  memset(M4, -1, CHAR_LENGTH);
+  memset(M5, -1, CHAR_LENGTH);
+  memset(M6, -1, CHAR_LENGTH);
   //memset(mem_done, 0, 2);
+
   
   // Initialize digital pins 12 and 13 as output.
   pinMode(ledPin, OUTPUT);
@@ -59,72 +60,122 @@ void setup() {
 
   // To output on the Serial Monitor
   Console.begin();
+
+  for(int c1=0;c1<60;c1++){
+      for(int c2=0;c2<6;c2++){
+          trajectory[c1][c2] = -1;
+      }
+  }
+
+  Bridge.put("M6","-1");
 }
  
 void loop() {
- 
-  // *********** ADD HERE AN IF STATEMENT TO CONTROL WHEN TO READ VALUES FROM MEMORY FOR EXAMPLE:
-  // THIS WILL ENSURE THAT ALL VALUE HAVE BEEN WRITTEN IN MEMORY, SEE PYTHON SCRIPT
-  //Bridge.get("mem_done", mem_done, 2);
-  //if(mem_done == 1){
      // Read Braccio movement coming from Python
-     Console.print("\n");
+     ////Console.print("\n");
      Bridge.get("M1", M1, CHAR_LENGTH);
      M1int = atoi(M1);
-     Console.print ("\n");
-     Console.print(M1int);
+     //Console.print ("\n");
+     //Console.print(M1int);
 
      Bridge.get("M2", M2, CHAR_LENGTH);
      M2int = atoi(M2);
-     Console.print ("\n");
-     Console.print(M2int);
+     //Console.print ("\n");
+     //Console.print(M2int);
 
      Bridge.get("M3", M3, CHAR_LENGTH);
      M3int = atoi(M3);
-     Console.print ("\n");
-     Console.print(M3int);
+     //Console.print ("\n");
+     //Console.print(M3int);
 
      Bridge.get("M4", M4, CHAR_LENGTH);
      M4int = atoi(M4);
-     Console.print ("\n");
-     Console.print(M4int);
+     //Console.print ("\n");
+     //Console.print(M4int);
 
      Bridge.get("M5", M5, CHAR_LENGTH);
      M5int = atoi(M5);
-     Console.print ("\n");
-     Console.print(M5int);
+     //Console.print ("\n");
+     //Console.print(M5int);
 
      Bridge.get("M6", M6, CHAR_LENGTH);
      M6int = atoi(M6);
-     Console.print ("\n");
-     Console.print(M6int);
+     //Console.print ("\nM6int: ");
+     //Console.print(M6int);
+     
+     if(M6int != -1){
+         trajectory[c][0] = M1int;
+         trajectory[c][1] = M2int;
+         trajectory[c][2] = M3int;
+         trajectory[c][3] = M4int;
+         trajectory[c][4] = M5int;
+         trajectory[c][5] = M6int;
 
-     // Perform the movement if a command was received
-     if(M1int != -1 and M2int != -1 and M3int != -1 and
-        M4int != -1 and M5int != -1 and M6int != -1 ){
-       // Check that the values for each joint are within the correct ranges
-       if (M1int > -1 && M1int < 181 && M2int > 14 && M2int < 166 && M3int > -1 && M3int < 181 &&
-           M4int > -1 && M4int < 181 && M5int > -1 && M5int < 181 && M6int > 9 && M6int < 74){
-        
-          digitalWrite(ledPin, HIGH);
-          Braccio.ServoMovement(20, M1int, M2int, M3int, M4int, M5int, M6int);
-       }
-       else{
-          Console.print("\nThe values you sent for the joints are not within the correct range");
-       }
+         if(M6int == 73){
+            flag = true;
+         }
+         // Reset the value of M6 to its safe value
+         M6int = -1;
+         Bridge.put("M6","-1");
+         Bridge.put("END","command_received");
+         //Console.print("\n Command put into trajectory");
+         
+         c++;
      }
-     else{
-       digitalWrite(ledPin, LOW);
-       Console.print("\n ...Waiting for a command...\n");
+
+     //Console.print("\nc: ");
+     //Console.print(c);
+     //Console.print("\n");
+     for (int z=0; z<c; z++){
+          //Console.print(trajectory[z][0]);
+          //Console.print(" ");
+          //Console.print(trajectory[z][1]);
+          //Console.print(" ");
+          //Console.print(trajectory[z][2]);
+          //Console.print(" ");
+          //Console.print(trajectory[z][3]);
+          //Console.print(" ");
+          //Console.print(trajectory[z][4]);
+          //Console.print(" ");
+          //Console.print(trajectory[z][5]);
+          //Console.print(" \n");
+     }
+
+     if(flag){
+         //Console.print("\n                     In Execution \n");
+         //Bridge.put("END","in_execution");
+         for(int d=0; d<c; d++){
+              //Console.print("LORENZO\n");
+              Braccio.ServoMovement(10, trajectory[d][0], trajectory[d][1], trajectory[d][2], trajectory[d][3], trajectory[d][4], trajectory[d][5]);
+              //Console.print(trajectory[d][0]);
+              //Console.print(" ");
+              //Console.print(trajectory[d][1]);
+              //Console.print(" ");
+              //Console.print(trajectory[d][2]);
+              //Console.print(" ");
+              //Console.print(trajectory[d][3]);
+              //Console.print(" ");
+              //Console.print(trajectory[d][4]);
+              //Console.print(" ");
+              //Console.print(trajectory[d][5]);
+              //Console.print(" \n");
+              trajectory[d][0] = -1;
+              trajectory[d][1] = -1;
+              trajectory[d][2] = -1;
+              trajectory[d][3] = -1;
+              trajectory[d][4] = -1;
+              trajectory[d][5] = -1;
+         }
+         //Console.print("\n Command Executed");
+         flag = false;
+         Bridge.put("M6","-1");
+         M6int = -1;
+         //Console.print("\n Command Executed2");
+         Bridge.put("END","command_executed");
+         c=0;
      }
      
-  M1int = -1;
-  M2int = -1;
-  M3int = -1;
-  M4int = -1;
-  M5int = -1;
-  M6int = -1;
-  //Wait
-  delay(20);
+     //Bridge.put("END","waiting_for_a_command");
+     digitalWrite(ledPin, LOW);
+     
 }
-

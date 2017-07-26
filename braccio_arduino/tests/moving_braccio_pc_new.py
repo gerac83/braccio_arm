@@ -2,26 +2,18 @@ import sys
 import requests
 import json
 
-def main(values):
-    # If the value for the movement is given, use it. Otherwise keep Braccio steady.
-    if len(values) == 7:
+def main(positions):
 
-        values.pop(0)
-        # Convert string to int
-        intValues = []
-        try:
-            for value in values:
-                intValues.append(int(float(value)))
+    trajectory = range(0,len(positions))        # Create a list with the same length as the number of positions in the trajectory
+    c = 0
+    for position in positions:
+        position.pop(0)
+        trajectory[c] = [int(value) for value in position]          # Insert each joint coordinate casted to int into the trajectory list
+        c+=1
 
 
-        except ValueError:
-            print "Expecting an int..."
-
-    else:
-        print "Expecting 6 values for the servos, " + str(len(values)-1) + " received. Command ignored."
-        intValues = [0]
-
-    print "moving_braccio_pc prints intValues: ", intValues
+    print trajectory
+    '''
     if (intValues[0] < 0 or intValues[0] > 180 or intValues[1] < 15 or intValues[1] > 165 or
         intValues[2] < 0 or intValues[2] > 180 or intValues[3] < 0 or intValues[3] > 180 or
         intValues[4] < 0 or intValues[4] > 180):
@@ -42,29 +34,18 @@ def main(values):
         to_be_written = to_be_written.replace("]","}")
         data = f.write(to_be_written+",\n")
     # End of testing code
-
+    '''
 
     url = "http://192.168.1.129:2883/jsonrpc"
     headers = {'content-type': 'application/json'}
-    if (len(intValues) > 1):
-        # Example echo method
-        payload = {
-            "method": "moving_braccio",
-            "params": {"M1": intValues[0], "M2": intValues[1], "M3": intValues[2], "M4": intValues[3], "M5": intValues[4], "M6": intValues[5]},
-            "jsonrpc": "2.0",
-            "id": 0,
-        }
-    else:
-        # Example echo method
-        payload = {
-            "method": "moving_braccio",
-            "params": {"M6": 0},
-            "jsonrpc": "2.0",
-            "id": 0,
-        }
+
+    payload = {
+        "method": "moving_braccio",
+        "params": {"trajectory":trajectory, "length":len(trajectory)},
+        "jsonrpc": "2.0",
+        "id": 0}
 
     try:
-        #print payload
         response = requests.post(
             url, data=json.dumps(payload), headers=headers).json()
         print response

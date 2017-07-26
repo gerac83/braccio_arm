@@ -4,14 +4,14 @@ import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import DisplayTrajectory
-import moving_braccio_pc
+import moving_braccio_pc_new
 import time
 
 
 def callback(data):
 
-    print "\n\nNew Position: "
-    rospy.loginfo(rospy.get_caller_id() + " I heard %s", DisplayTrajectory.trajectory)
+    print "\n\nNew Trajectory: "
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", DisplayTrajectory.trajectory)
 
     text = str(data.trajectory[0])
 
@@ -21,8 +21,7 @@ def callback(data):
         if "positions" in line:
             positions.append(line)
 
-    last_command = []           # Save the last command
-    result = ""
+    trajectory = []
     for elem in positions:
         start = elem.index("[")
         end = elem.index("]")
@@ -34,12 +33,12 @@ def callback(data):
             else:
                 command = command + [float(elem)*(57.2958)+90]
 
-        # variable result should be 'Done!'
-        result = moving_braccio_pc.main(command+['10'])      # Keep the gripper open
-        last_command = command
 
-    result = moving_braccio_pc.main(last_command+['73'])      # Close the gripper to grasp the object
+        trajectory.append(command+['10'])      # Keep the gripper open
 
+    # variable result should be 'Done!'
+    #result = moving_braccio_pc_new.main(trajectory)
+    moving_braccio_pc_new.main(trajectory)
 
 def listener():
 
