@@ -75,7 +75,7 @@ class RobotTrajectoryFollower(object):
             command = ['__ignored__']
             for elem in to_be_appended:
                 if 'e' in elem:
-                    command = command + [0]
+                    command = command + [90]
                 else:
                     command = command + [float(elem)*(57.2958)+90]
 

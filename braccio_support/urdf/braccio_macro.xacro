@@ -116,7 +116,7 @@
       <origin xyz="0 0 7.22" rpy="0 0 0"/>
       <parent link="${prefix}_base"/>
       <child link="${prefix}_link_1"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 0 -1"/>
       <limit lower="-1.57" upper="1.57" effort="0" velocity="3.67"/>
     </joint>
     
@@ -148,7 +148,7 @@
       <origin xyz="6.1 0 0" rpy="0 ${m_pi_2} 0" />
       <parent link="${prefix}_link_4"/>
       <child link="${prefix}_link_5"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 0 -1"/>
       <limit lower="-1.57" upper="1.57" effort="0" velocity="3.67"/>
     </joint>
     

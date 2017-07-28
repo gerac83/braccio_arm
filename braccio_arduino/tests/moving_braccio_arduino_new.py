@@ -7,35 +7,40 @@ import sys
 sys.path.insert(0, '/usr/lib/python2.7/bridge')
 from time import sleep
 from bridgeclient import BridgeClient as bridgeclient
-
+import csv
 
 value = bridgeclient()
+trajectory = []
 
 @dispatcher.add_method
 def moving_braccio(**kwargs):
-    print "YO, ARDUINO HERE"
-    print kwargs["length"]
-    value.put("trajectory",str(kwargs["trajectory"]))
-    value.put("length",str(kwargs["length"]))
-    print "The trajectory was sent to the Bridge"
-    '''
-    value.put('M1',str(kwargs["M1"]))
-    value.put('M2',str(kwargs["M2"]))
-    value.put('M3',str(kwargs["M3"]))
-    value.put('M4',str(kwargs["M4"]))
-    value.put('M5',str(kwargs["M5"]))
-    value.put('M6',str(kwargs["M6"]))
-    '''
+    global trajectory
+    trajectory.append([str(kwargs["M1"]),str(kwargs["M2"]),str(kwargs["M3"]),str(kwargs["M4"]),str(kwargs["M5"]),str(kwargs["M6"])])
 
-    '''     PUT THIS BACK IN
-    executed = False
-    while (not executed):
-        result = value.get('END')
-        if result == "command_executed":
-            executed = True
-            return "Done!"
-    '''
-    return      # DELETE THIS
+    if trajectory[-1][-1] == '73':
+        executed = False
+
+        # Write to SD card
+        with open("/mnt/sda1/trajectory.csv", "wb") as csv_file:
+            writer = csv.writer(csv_file, delimiter=',')
+            for position in trajectory:
+                writer.writerow((position[0],position[1],position[2],position[3],position[4],position[5]))
+
+        reset_trajectory()
+
+        value.put('new_trj','T')
+        while (not executed):
+            result = value.get('END')
+            if result == "command_executed":
+                executed = True
+
+    # ALSO RESET CSV FILE MAYBE, depending on what line 24 does (append or overwrite?)!!!!!!!!!!!!!!
+    return "Done!"
+
+def reset_trajectory():
+    global trajectory
+    trajectory = []
+    return
 
 @Request.application
 def application(request):
