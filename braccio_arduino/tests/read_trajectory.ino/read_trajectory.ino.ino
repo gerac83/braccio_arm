@@ -64,18 +64,23 @@ void loop() {
               
               if(line != ""){
                   start_index = 0;
+                  
                   for (int z=0;z<5;z++){
                     comma_index = strcspn(line.c_str(),key);
                     trajectory[c][z] = (short)line.substring(start_index,comma_index).toInt();
                     line[comma_index] = '.';
                     start_index = comma_index+1;
                   }
-                  trajectory[c][6] = (short)line.substring(comma_index,comma_index+3).toInt();  // 10 < gripper < 73
-    
+                  
+                  trajectory[c][5] = (short)line.substring(comma_index+1,(comma_index+3)).toInt();  // 10 < gripper < 73
                   c++;
               }
               
           }
+      }
+      else{
+          Console.println("\nERROR: File not found. Make sure that the SD card is inserted in the Arduino and that the file /mnt/sda1/trajectory.csv exists");
+          delay(1000);
       }
     
       dataFile.close();
@@ -83,7 +88,7 @@ void loop() {
       for(int d=0; d<c; d++){
           Braccio.ServoMovement(10, trajectory[d][0], trajectory[d][1], trajectory[d][2], trajectory[d][3], trajectory[d][4], trajectory[d][5]);
           if(d==0){
-              delay(100);       // After the initial position, wait a moment -- useful when Braccio isn't in the right initial position but can be removed
+              delay(100);       // After the initial position, wait a moment -- useful visually when Braccio isn't in the right initial position but this line can be removed
           }
       }
 
