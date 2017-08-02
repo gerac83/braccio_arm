@@ -17,7 +17,7 @@ Servo gripper;
 char bridge_flag[CHAR_LENGTH];
 
 String line;
-short trajectory[60][6];
+short trajectory[100][6];
 int c=0;
 char key[] = ",";         // Used to split a command to get each joint's position
 int start_index;          // Used with comma_index for parsing the joint's position

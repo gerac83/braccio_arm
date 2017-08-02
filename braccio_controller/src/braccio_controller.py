@@ -11,6 +11,7 @@ sys.path.append('/home/lorenzo/catkin_ws/src/braccio_arm/braccio_arduino/tests')
 import moving_braccio_pc
 
 
+
 joint_names = ['braccio_joint_1', 'braccio_joint_2', 'braccio_joint_3', 'braccio_joint_4', 'braccio_joint_5']
 
 class RobotTrajectoryFollower(object):
