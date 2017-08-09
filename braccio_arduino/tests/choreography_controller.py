@@ -1,17 +1,11 @@
 import sys
 import requests
 import json
-#from multiprocessing.dummy import Pool as ThreadPool
+
 
 payload = {}
 headers = {'content-type': 'application/json'}
 
-'''
-def send_command(IP):
-	response = requests.post(
-		IP, data=json.dumps(payload), headers=headers).json()
-	print "Arduino ", IP, response
-'''
 
 def main(values, IP):
 
@@ -49,19 +43,8 @@ def main(values, IP):
 			  "closed.")
 
 
-	# Used for testing
-	'''
-	with open("positions.txt", "a") as f:
-		to_be_written = str(intValues)
-		to_be_written = to_be_written.replace("[","{")
-		to_be_written = to_be_written.replace("]","}")
-		data = f.write(to_be_written+",\n")
-	'''
-	# End of testing code
-
-
 	#url1 = "http://192.168.1.129:4000/jsonrpc"
-	IPs = [IP]										# for multithreading
+	#IPs = [IP]										# for multithreading
 
 	if (len(intValues) > 1):
 		# Example echo method
@@ -82,10 +65,9 @@ def main(values, IP):
 
 	try:
 		response = requests.post(
-			IPs[0], data=json.dumps(payload), headers=headers).json()
+			IP, data=json.dumps(payload), headers=headers).json()
 		print "Arduino ", IP, response
-		#pool = ThreadPool(4)
-		#results = pool.map(send_command, IPs)
+
 
 	except requests.ConnectionError:
 		print "Connection error. Is moving_braccio_arduino.py running?"
@@ -93,5 +75,4 @@ def main(values, IP):
 
 
 if __name__ == "__main__":
-	print "sys.argv: ", sys.argv
 	main(sys.argv)
