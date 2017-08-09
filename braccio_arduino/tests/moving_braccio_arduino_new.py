@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+'''
+Change the IP address on line 57 to the one
+assigned to your Arduino, upload this script,
+ssh into your Arduino and run this script.
+NOTE: you'll need to have Python, requests
+and Werkzeug installed.
+'''
 from werkzeug.wrappers import Request, Response
 from werkzeug.serving import run_simple
 from jsonrpc import JSONRPCResponseManager, dispatcher
@@ -17,13 +24,13 @@ def moving_braccio(**kwargs):
     global trajectory
     trajectory.append([str(kwargs["M1"]),str(kwargs["M2"]),str(kwargs["M3"]),str(kwargs["M4"]),str(kwargs["M5"]),str(kwargs["M6"])])
 
-    if trajectory[-1][-1] == '73':
+    if trajectory[-1][-1] == '74':
         executed = False
 
         # Write to SD card
         with open("/mnt/sda1/trajectory.csv", "wb") as csv_file:
             writer = csv.writer(csv_file, delimiter=',')
-            for position in trajectory:
+            for position in trajectory[:-1]:                    # ignore the last position (trajectory[-1][-1]=74 is used as a flag)
                 writer.writerow((position[0],position[1],position[2],position[3],position[4],position[5]))
 
         reset_trajectory()
@@ -51,4 +58,4 @@ def application(request):
 
 
 if __name__ == '__main__':
-    run_simple('192.168.1.129', 2883, application)
+    run_simple('192.168.1.140', 4000, application)

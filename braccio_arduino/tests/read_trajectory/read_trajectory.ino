@@ -62,7 +62,7 @@ void loop() {
           while(dataFile.available()){
               line = String(dataFile.readStringUntil(10));     // newLine in ASCII
               
-              if(line != ""){
+              if(line != "" && c!=100){
                   start_index = 0;
                   
                   for (int z=0;z<5;z++){
@@ -74,6 +74,9 @@ void loop() {
                   
                   trajectory[c][5] = (short)line.substring(comma_index+1,(comma_index+3)).toInt();  // 10 < gripper < 73
                   c++;
+              }
+              else if(c == 100){
+                  Console.println("\nERROR:The trajectory limit (100 positions) has been reached");
               }
               
           }
@@ -88,7 +91,7 @@ void loop() {
       for(int d=0; d<c; d++){
           Braccio.ServoMovement(10, trajectory[d][0], trajectory[d][1], trajectory[d][2], trajectory[d][3], trajectory[d][4], trajectory[d][5]);
           if(d==0){
-              delay(100);       // After the initial position, wait a moment -- useful visually when Braccio isn't in the right initial position but this line can be removed
+              delay(50);       // After the initial position, wait a moment -- useful visually when Braccio isn't in the right initial position but this line can be removed
           }
       }
 

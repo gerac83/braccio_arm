@@ -1,18 +1,19 @@
 import sys
 import requests
 import json
-from multiprocessing.dummy import Pool as ThreadPool
+#from multiprocessing.dummy import Pool as ThreadPool
 
 payload = {}
 headers = {'content-type': 'application/json'}
 
+'''
 def send_command(IP):
 	response = requests.post(
 		IP, data=json.dumps(payload), headers=headers).json()
 	print "Arduino ", IP, response
+'''
 
-
-def main(values):
+def main(values, IP):
 
 	global payload
 
@@ -34,7 +35,7 @@ def main(values):
 		print "Expecting 6 values for the servos, " + str(len(values)-1) + " received. Command ignored."
 		intValues = [0]
 
-	print "moving_braccio_pc prints intValues: ", intValues
+	print "choreography_controller prints intValues: ", intValues
 	if (intValues[0] < 0 or intValues[0] > 180 or intValues[1] < 15 or intValues[1] > 165 or
 		intValues[2] < 0 or intValues[2] > 180 or intValues[3] < 0 or intValues[3] > 180 or
 		intValues[4] < 0 or intValues[4] > 180):
@@ -55,15 +56,13 @@ def main(values):
 		to_be_written = to_be_written.replace("[","{")
 		to_be_written = to_be_written.replace("]","}")
 		data = f.write(to_be_written+",\n")
-    '''
+	'''
 	# End of testing code
 
 
-	url1 = "http://192.168.1.129:4000/jsonrpc"
-	url2 = "http://192.168.1.139:4000/jsonrpc"
-	url3 = "http://192.168.1.140:4000/jsonrpc"
-	IPs = [url1, url2, url3]
-	#headers = {'content-type': 'application/json'}
+	#url1 = "http://192.168.1.129:4000/jsonrpc"
+	IPs = [IP]										# for multithreading
+
 	if (len(intValues) > 1):
 		# Example echo method
 		payload = {
@@ -82,22 +81,11 @@ def main(values):
 		}
 
 	try:
-
-		pool = ThreadPool(4)
-		results = pool.map(send_command, IPs)
-		'''
 		response = requests.post(
-			url1, data=json.dumps(payload), headers=headers).json()
-		print "Arduino 1:", response
-
-		response = requests.post(
-			url2, data=json.dumps(payload), headers=headers).json()
-		print "Arduino 2:", response
-
-		response = requests.post(
-			url3, data=json.dumps(payload), headers=headers).json()
-		print "Arduino 3:", response
-		'''
+			IPs[0], data=json.dumps(payload), headers=headers).json()
+		print "Arduino ", IP, response
+		#pool = ThreadPool(4)
+		#results = pool.map(send_command, IPs)
 
 	except requests.ConnectionError:
 		print "Connection error. Is moving_braccio_arduino.py running?"
@@ -105,4 +93,5 @@ def main(values):
 
 
 if __name__ == "__main__":
+	print "sys.argv: ", sys.argv
 	main(sys.argv)
