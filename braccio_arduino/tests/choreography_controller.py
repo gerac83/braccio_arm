@@ -15,7 +15,7 @@ def main(values, IP):
 	if len(values) == 7:
 
 		values.pop(0)
-		# Convert string to int
+		# Convert list of strings to int
 		intValues = []
 		try:
 			for value in values:
@@ -29,7 +29,8 @@ def main(values, IP):
 		print "Expecting 6 values for the servos, " + str(len(values)-1) + " received. Command ignored."
 		intValues = [0]
 
-	print "choreography_controller prints intValues: ", intValues
+	#print "choreography_controller prints intValues: ", intValues
+
 	if (intValues[0] < 0 or intValues[0] > 180 or intValues[1] < 15 or intValues[1] > 165 or
 		intValues[2] < 0 or intValues[2] > 180 or intValues[3] < 0 or intValues[3] > 180 or
 		intValues[4] < 0 or intValues[4] > 180):
@@ -42,9 +43,6 @@ def main(values, IP):
 			  "values from 10 to 73 degrees. 10: the tongue is open, 73: the gripper is "
 			  "closed.")
 
-
-	#url1 = "http://192.168.1.129:4000/jsonrpc"
-	#IPs = [IP]										# for multithreading
 
 	if (len(intValues) > 1):
 		# Example echo method
