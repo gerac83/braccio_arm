@@ -12,7 +12,7 @@ To execute commands from RViz, as before ssh into the Arduinos and run the pytho
 
 and while RViz is launching, when it says that it is waiting for an Action Server open a new Terminal and run:
 
-    - python braccio_controller.py      # Located in /braccio_arduino/tests
+    - python braccio_controller.py      # Located in /braccio_controller/src/
 
 Then after clicking Execute in Rviz the robot will move.
 
