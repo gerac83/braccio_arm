@@ -19,4 +19,4 @@ Then after clicking Execute in Rviz the robot will move.
 
 
 
-For info please contact Lorenzo Betto (lorenzobetto@yahoo.co.uk) or Gerardo Aragón Camarasa (Gerardo.AragonCamarasa@glasgow.ac.uk).
+For info please contact Lorenzo Betto (smemo23@gmail.com) or Gerardo Aragón Camarasa (Gerardo.AragonCamarasa@glasgow.ac.uk).
